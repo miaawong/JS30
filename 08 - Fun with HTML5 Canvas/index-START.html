@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>HTML5 Canvas</title>
+</head>
+
+<body>
+  <!-- we have this canvas element to draw on  -->
+  <canvas id="draw" width="800" height="800"></canvas>
+  <script>
+    const canvas = document.querySelector('#draw');
+    // you don't draw directly on the canvas element, you draw on the context. 
+    // context can be 2d or 3d 
+    const ctx = canvas.getContext('2d');
+    // next thing is to size up our canvas to be the exact width of the window
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    // color 
+    ctx.strokeStyle = '#BADA55';
+    // end of the line or when a line meets another line 
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    ctx.lineWidth = 100;
+    // blending drawing over top of each other
+    // google it 
+    // ctx.globalCompositeOperation = 'soft-light';
+
+    // to tell us should we actually draw to this canvas or not
+    let isDrawing = false;
+    // need a starting x and y, and ending x and y. 
+    let lastX = 0;
+    let lastY = 0;
+    let hue = 0;
+    let direction = true;
+    //mouse move event 
+    // when you move your mouse. 
+    function draw(e) {
+      if (!isDrawing) return; // stop the fn from running when they are not moused down 
+      console.log(e);
+      ctx.strokeStyle = `hsl(${hue}, 100% , 50%)`;
+      ctx.beginPath();
+      //start from 
+      ctx.moveTo(lastX, lastY);
+      // go to 
+      ctx.lineTo(e.offsetX, e.offsetY);
+      ctx.stroke();
+      [lastX, lastY] = [e.offsetX, e.offsetY];
+      // lastX = e.offsetX;
+      // lastY = e.offsetY;
+      // increment hue
+      hue++;
+      // to reset hue 
+      if (hue >= 360) {
+        hue = 0;
+      }
+      if (ctx.lineWidth >= 300 || ctx.lineWidth <= 1) {
+        direction = !direction;
+      }
+      if (direction) {
+        ctx.lineWidth++;
+      } else {
+        ctx.lineWidth--;
+      }
+    }
+
+    // to change 
+    canvas.addEventListener('mousedown', (e) => {
+      isDrawing = true;
+      // update x and y, to put us where we want to start 
+      [lastX, lastY] = [e.offsetX, e.offsetY];
+    });
+
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', () => isDrawing = false);
+    canvas.addEventListener('mouseout', () => isDrawing = false); 
+  </script>
+
+  <style>
+    html,
+    body {
+      margin: 0;
+    }
+  </style>
+
+</body>
+
+</html>
